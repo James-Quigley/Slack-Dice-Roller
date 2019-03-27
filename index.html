@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>D&D Dice Roller for Slack</title>
+  <style>
+    body {
+      text-align: center;
+      margin: 0;
+      background-color: lightgray;
+    }
+    #grid {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: auto 25% 25% 25% auto;
+      grid-template-rows: 20% 10% 60% 10%;
+      justify-content: center;
+      align-content: center;
+      align-items: center;
+      justify-items: center;
+    }
+
+    h1 {
+      grid-row: 1;
+      grid-column: 2 /span 3;
+      font-size: 3em;
+    }
+
+    h2 {
+      grid-row: 2;
+      grid-column: 2 /span 3;
+      font-weight: 300;
+    }
+
+    #feature1 {
+      grid-row: 3;
+      grid-column: 2;
+    }
+
+    #feature2 {
+      grid-row: 3;
+      grid-column: 3;
+    }
+
+    #feature3 {
+      grid-row: 3;
+      grid-column: 4;
+    }
+
+    #footer {
+      grid-row: 4;
+      grid-column: 1 / span 4
+    }
+
+
+  </style>
+</head>
+<body>
+  <div id="grid">
+      <h1>D&D Dice Roller for Slack</h1>
+      <h2>Roll any sided die any number of times!</h2>
+      <div id="feature1">
+        <p>Even statistical distribution</p>
+        <p>Just like rolling fair dice.</p>
+      </div>
+      <div id="feature2">
+        <a href="https://slack.com/oauth/authorize?client_id=398030195153.581685123057&scope=commands"><img alt="Add to Slack"
+            height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png"
+            srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
+      </div>
+      <div id="feature3">
+        <p>Fast and easy syntax</p>
+        <p>/roll 3d6</p>
+      </div>
+      <div id="footer">
+        Made by <a href="https://github.com/James-Quigley">James Quigley</a>
+      </div>
+  </div>
+
+
+</body>
+</html>

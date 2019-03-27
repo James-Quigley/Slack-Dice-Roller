@@ -1,11 +1,21 @@
 const { text } = require("micro");
 const { parse } = require("querystring");
+const fs = require('fs');
+const path = require('path');
+
+const document = path.join(__dirname, 'index.html');
+const html = fs.readFileSync(document);
 
 function randomDiceRoll(sides) {
   return Math.floor(Math.random() * sides) + 1;
 }
 
 module.exports = async (req, res) => {
+  console.log("METHOD", req.method);
+  if (req.method == "GET") {
+    res.end(html);
+    return;
+  }
   const body = parse(await text(req));
   console.log("Body", body);
 
