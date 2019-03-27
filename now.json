@@ -10,5 +10,6 @@
       "src": "*.js",
       "use": "@now/node"
     }
-  ]
+  ],
+  "alias": "https://diceroll.now.sh"
 }
