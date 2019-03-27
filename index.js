@@ -42,33 +42,45 @@ module.exports = async (req, res) => {
   } else {
     const [num, sides] = body.text.toLowerCase().split('d').map((n) => parseInt(n));
 
-    let total = 0;
-    let rolls = [];
-    for (let i = 0; i < num; i++) {
-      let roll = randomDiceRoll(sides);
-      total += roll;
-      rolls.push(roll);
-    };
-
-    attachments = [
-      {
-        fallback: "`" + body.text + "`: " + total,
-        color: "#00ff00",
-        text: `@${body.user_name} rolled a *${total}*`,
-        fields: [
-          {
-            title: "Die",
-            value: bodyText,
-            short: true
-          },
-          {
-            title: "Rolls",
-            value: rolls.join(", "),
-            short: true
-          }
-        ]
-      }
-    ]
+    if (sides < 2){
+      attachments = [
+        {
+          text: "When you find a fair die with that many sides, let me know",
+          fallback: "When you find a fair die with that many sides, let me know",
+          color: "#ff0000",
+          title: "Invalid input"
+        }
+      ];
+    } else {
+      let total = 0;
+      let rolls = [];
+      for (let i = 0; i < num; i++) {
+        let roll = randomDiceRoll(sides);
+        total += roll;
+        rolls.push(roll);
+      };
+  
+      attachments = [
+        {
+          fallback: "`" + body.text + "`: " + total,
+          color: "#00ff00",
+          text: `@${body.user_name} rolled a *${total}*`,
+          fields: [
+            {
+              title: "Die",
+              value: bodyText,
+              short: true
+            },
+            {
+              title: "Rolls",
+              value: rolls.join(", "),
+              short: true
+            }
+          ],
+          footer: sides == 2 ? "Also known as a coin" : undefined
+        }
+      ]
+    }
   }
 
   
