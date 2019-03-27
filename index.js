@@ -1,14 +1,15 @@
 const { text } = require("micro");
+const { parse } = require("querystring");
 
 function randomDiceRoll(sides) {
   return Math.floor(Math.random() * sides) + 1;
 }
 
 module.exports = async (req, res) => {
-  const body = await text(req);
+  const body = parse(await text(req));
   console.log("Body", body);
 
-  const [num, sides] = body.toLowerCase().split('d').map((n) => parseInt(n));
+  const [num, sides] = body.text.toLowerCase().split('d').map((n) => parseInt(n));
 
   let total = 0;
   for (let i = 0; i < num; i++){

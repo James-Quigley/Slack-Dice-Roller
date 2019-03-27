@@ -6,6 +6,7 @@
   "author": "Personal <James.A.Quigley@asu.edu>",
   "license": "MIT",
   "dependencies": {
-    "micro": "^9.3.3"
+    "micro": "^9.3.3",
+    "querystring": "^0.2.0"
   }
 }
