@@ -19,28 +19,61 @@ module.exports = async (req, res) => {
 
   const bodyText = body.text.toLowerCase();
 
-  let message, attachments;
+  let attachments;
+
   if (bodyText == 'help'){
-    message = "*Help:*";
-    attachments = [{ text: "This slash command is to simulate rolling dice. The first number in the command is the number of dice to roll. The second number is the number of sides that die should have. For example a `/roll 2d6` will have a result between 2 and 12." }]
+    attachments = [
+      {
+        text: "This slash command is to simulate rolling dice. The first number in the command is the number of dice to roll. The second number is the number of sides that die should have. For example a `/roll 2d6` will have a result between 2 and 12.",
+        fallback: "This slash command is to simulate rolling dice. The first number in the command is the number of dice to roll. The second number is the number of sides that die should have. For example a `/roll 2d6` will have a result between 2 and 12.",
+        color: "#ffff00",
+        title: "Help"
+      }
+    ];
   } else if (!/^\d+d\d+$/.test(bodyText)){
-    message = "Invalid input";
-    attachments = [{ text: "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die" }];
+    attachments = [
+      {
+        text: "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die",
+        fallback: "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die",
+        color: "#ff0000",
+        title: "Invalid input"
+      }
+    ];
   } else {
     const [num, sides] = body.text.toLowerCase().split('d').map((n) => parseInt(n));
 
     let total = 0;
+    let rolls = [];
     for (let i = 0; i < num; i++) {
-      total += randomDiceRoll(sides);
+      let roll = randomDiceRoll(sides);
+      total += roll;
+      rolls.push(roll);
     };
 
-
-    message = "`" + body.text + "`: " + total;
+    attachments = [
+      {
+        fallback: "`" + body.text + "`: " + total,
+        color: "#00ff00",
+        text: `@${body.user_name} rolled a *${total}*`,
+        fields: [
+          {
+            title: "Die",
+            value: bodyText,
+            short: true
+          },
+          {
+            title: "Rolls",
+            value: rolls.join(", "),
+            short: true
+          }
+        ]
+      }
+    ]
   }
 
   
   const response_type = "in_channel";
 
   res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify({ response_type, text: message, attachments }));
+  res.end(JSON.stringify({ response_type, attachments }));
 };
