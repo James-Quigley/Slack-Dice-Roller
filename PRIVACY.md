@@ -1,0 +1,1 @@
+This app doesn't collect or share any personal information.

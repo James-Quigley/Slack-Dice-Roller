@@ -11,13 +11,11 @@ function randomDiceRoll(sides) {
 }
 
 module.exports = async (req, res) => {
-  console.log("METHOD", req.method);
   if (req.method == "GET") {
     res.end(html);
     return;
   }
   const body = parse(await text(req));
-  console.log("Body", body);
 
   const bodyText = body.text.toLowerCase();
 
