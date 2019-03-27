@@ -22,7 +22,10 @@ module.exports = async (req, res) => {
   const bodyText = body.text.toLowerCase();
 
   let message, attachments;
-  if (!/^\d+d\d+$/.test(bodyText)){
+  if (bodyText == 'help'){
+    message = "*Help:*";
+    attachments = [{ text: "This slash command is to simulate rolling dice. The first number in the command is the number of dice to roll. The second number is the number of sides that die should have. For example a `/roll 2d6` will have a result between 2 and 12." }]
+  } else if (!/^\d+d\d+$/.test(bodyText)){
     message = "Invalid input";
     attachments = [{ text: "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die" }];
   } else {
