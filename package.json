@@ -1,0 +1,11 @@
+{
+  "name": "Slack-Dice-Roller",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:James-Quigley/Slack-Dice-Roller.git",
+  "author": "Personal <James.A.Quigley@asu.edu>",
+  "license": "MIT",
+  "dependencies": {
+    "micro": "^9.3.3"
+  }
+}

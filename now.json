@@ -1,0 +1,14 @@
+{
+  "name": "slack dice roll",
+  "version": 2,
+  "env": {
+    "DICE_ROLL_SLACK_CLIENT_ID": "@dice-roll-slack-client-id",
+    "DICE_ROLL_SLACK_CLIENT_SECRET": "@dice-roll-slack-client-secret"
+  },
+  "builds": [
+    {
+      "src": "*.js",
+      "use": "@now/node"
+    }
+  ]
+}
