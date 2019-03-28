@@ -2,12 +2,10 @@ const fetch = require("node-fetch");
 const { parse, stringify } = require("querystring");
 
 module.exports = async (req, res) => {
-  console.log("1");
   // Extract code received on the request url
   const urlQueryString = req.url.replace(/^.*\?/, '');
   const code = parse(urlQueryString).code;
 
-  console.log("2");
   // Compose authHeader by encoding the string ${client_id}:${client_secret}
   const client_id = process.env.DICE_ROLL_SLACK_CLIENT_ID;
   const client_secret = process.env.DICE_ROLL_SLACK_CLIENT_SECRET;
@@ -22,7 +20,6 @@ module.exports = async (req, res) => {
       'Content-Type': 'application/x-www-form-urlencoded',
     }
   });
-  console.log("3");
   const { access_token } = await oauthAccess.json();
 
   // Hit auth.test for slack domain

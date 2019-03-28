@@ -73,7 +73,7 @@ module.exports = async (req, res) => {
             },
             {
               title: "Rolls",
-              value: rolls <= 100 ? rolls.join(", ") : "You're just going to have to trust me on this one",
+              value: num <= 100 ? rolls.join(", ") : "You're just going to have to trust me on this one",
               short: true
             }
           ],
