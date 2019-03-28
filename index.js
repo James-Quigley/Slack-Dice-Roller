@@ -51,6 +51,15 @@ module.exports = async (req, res) => {
           title: "Invalid input"
         }
       ];
+    } else if (num < 1) {
+      attachments = [
+        {
+          text: "I need to roll at least one die",
+          fallback: "I need to roll at least one die",
+          color: "#ff0000",
+          title: "Invalid input"
+        }
+      ];
     } else {
       let total = 0;
       let rolls = [];
