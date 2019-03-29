@@ -1,5 +1,11 @@
 const fetch = require("node-fetch");
 const { parse, stringify } = require("querystring");
+const fs = require('fs');
+const path = require('path');
+
+const document = path.join(__dirname, 'success.html');
+const html = fs.readFileSync(document);
+
 
 module.exports = async (req, res) => {
   // Extract code received on the request url
@@ -30,9 +36,8 @@ module.exports = async (req, res) => {
       'Authorization': `Bearer ${access_token}`
     }
   });
-  const { url:slackUrl } = await authTest.json();
+  const { team_id } = await authTest.json();
 
-  // Send redirect response to slack domain
-  res.writeHead(302, 'Redirect', { 'Location': slackUrl });
-  res.end();
+  res.end(new Buffer(html.toString().replace('TEAM_ID', team_id)));
+  return;
 };
