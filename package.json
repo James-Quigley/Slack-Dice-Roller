@@ -8,6 +8,7 @@
   "dependencies": {
     "micro": "^9.3.3",
     "node-fetch": "^2.3.0",
+    "qs": "^6.7.0",
     "querystring": "^0.2.0"
   }
 }

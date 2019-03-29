@@ -2,6 +2,8 @@ const { text } = require("micro");
 const { parse } = require("querystring");
 const fs = require('fs');
 const path = require('path');
+const qs = require('qs');
+const crypto = require('crypto');
 
 const document = path.join(__dirname, 'index.html');
 const html = fs.readFileSync(document);
@@ -15,9 +17,33 @@ module.exports = async (req, res) => {
     res.end(html);
     return;
   }
-  const body = parse(await text(req));
+  const rawBody = await text(req);
+  const body = parse(rawBody);
 
   const bodyText = body.text.toLowerCase();
+
+  const qsBody = qs.stringify(body, { format: 'RFC1738' });
+  var slackSignature = req.headers['x-slack-signature'];
+  var timestamp = req.headers['x-slack-request-timestamp'];
+
+  var sigBasestring = 'v0:' + timestamp + ':' + qsBody;
+
+  const slackSigningSecret = process.env.DICE_ROLL_SLACK_SIGNING_SECRET;
+
+  var mySignature = 'v0=' +
+    crypto.createHmac('sha256', slackSigningSecret)
+      .update(sigBasestring, 'utf8')
+      .digest('hex');
+
+  if (!crypto.timingSafeEqual(
+    new Buffer(mySignature, 'utf8'),
+    new Buffer(slackSignature, 'utf8'))) {
+    res.writeHead(400, { "Content-Type": "text/plain" });
+    res.end("Signature verification failed");
+    return;
+  }
+
+  
 
   let attachments;
 
