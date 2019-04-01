@@ -1,1 +1,1 @@
-This app doesn't collect or share any personal information.
+Some information about your team is collected in the incidental use of the command and may be logged. This could include information about your Slack workspace's team name and ID, channel ID and name, user ID and name, and any information passed to the command by the user. This data will never be used for anything other than to process your command and will never be provided to a third party.
