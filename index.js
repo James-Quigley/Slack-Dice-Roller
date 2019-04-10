@@ -94,6 +94,8 @@ module.exports = async (req, res) => {
         total += roll;
         rolls.push(roll);
       };
+
+      console.log(`ROLL: ${num}d${sides} = ${total}`);
   
       attachments = [
         {
