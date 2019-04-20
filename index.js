@@ -29,6 +29,10 @@ module.exports = async (req, res) => {
   var slackSignature = req.headers['x-slack-signature'];
   var timestamp = req.headers['x-slack-request-timestamp'];
 
+  if (!slackSignature || !timestamp){
+    return;
+  }
+
   var sigBasestring = 'v0:' + timestamp + ':' + qsBody;
 
   const slackSigningSecret = process.env.DICE_ROLL_SLACK_SIGNING_SECRET;
@@ -70,6 +74,8 @@ module.exports = async (req, res) => {
     ];
   } else {
     const [num, sides] = body.text.toLowerCase().split('d').map((n) => parseInt(n));
+
+
 
     if (sides < 2){
       attachments = [
