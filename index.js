@@ -12,6 +12,9 @@ function randomDiceRoll(sides) {
   return Math.floor(Math.random() * sides) + 1;
 }
 
+const MAX_DICE = 1000;
+const MAX_SIDES = 100;
+
 module.exports = async (req, res) => {
   if (req.method == "GET") {
     res.end(html);
@@ -20,7 +23,7 @@ module.exports = async (req, res) => {
   const rawBody = await text(req);
   const body = parse(rawBody);
 
-  const bodyText = body.text.toLowerCase();
+  const bodyText = body.text ? body.text.toLowerCase() : '';
 
   const qsBody = qs.stringify(body, { format: 'RFC1738' });
   var slackSignature = req.headers['x-slack-signature'];
@@ -82,6 +85,24 @@ module.exports = async (req, res) => {
         {
           text: "I need to roll at least one die",
           fallback: "I need to roll at least one die",
+          color: "#ff0000",
+          title: "Invalid input"
+        }
+      ];
+    } else if (num > MAX_DICE) {
+      attachments = [
+        {
+          text: `${MAX_DICE} dice maximum`,
+          fallback: `${MAX_DICE} dice maximum`,
+          color: "#ff0000",
+          title: "Invalid input"
+        }
+      ];
+    } else if (sides > MAX_SIDES) {
+      attachments = [
+        {
+          text: `${MAX_SIDES} sides maximum`,
+          fallback: `${MAX_SIDES} sides maximum`,
           color: "#ff0000",
           title: "Invalid input"
         }
