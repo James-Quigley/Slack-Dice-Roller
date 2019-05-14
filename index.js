@@ -136,7 +136,7 @@ module.exports = async (req, res) => {
           fields: [
             {
               title: "Die",
-              value: bodyText,
+              value: rollText,
               short: true
             },
             {
