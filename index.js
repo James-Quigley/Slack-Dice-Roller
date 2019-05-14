@@ -166,7 +166,12 @@ module.exports = async (req, res) => {
   res.end(JSON.stringify({ response_type, attachments }));
 
   const AWS = require('aws-sdk');
-  AWS.config.update({region: 'us-east-1'});
+  AWS.config.update(
+    {
+      region: 'us-east-1',
+      secretAccessKey: process.env.DICE_ROLL_AWS_SECRET_ACCESS_KEY,
+      accessKeyId: process.env.DICE_ROLL_AWS_ACCESS_KEY_ID
+    });
   const ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
   var params = {
     Item: {
