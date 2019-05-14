@@ -153,7 +153,7 @@ module.exports = async (req, res) => {
         attachments[0].fields.push({
           title: "Reason",
           value: reason,
-          short: true
+          short: false
         });
       }
     }
