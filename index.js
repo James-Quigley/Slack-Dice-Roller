@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const qs = require('qs');
 const crypto = require('crypto');
+const uuid = require('uuid/v4');
 
 const document = path.join(__dirname, 'index.html');
 const html = fs.readFileSync(document);
@@ -29,7 +30,7 @@ module.exports = async (req, res) => {
   var slackSignature = req.headers['x-slack-signature'];
   var timestamp = req.headers['x-slack-request-timestamp'];
 
-  if (!slackSignature || !timestamp){
+  if (!slackSignature || !timestamp) {
     return;
   }
 
@@ -50,11 +51,11 @@ module.exports = async (req, res) => {
     return;
   }
 
-  
 
-  let attachments;
 
-  if (bodyText == 'help'){
+  let attachments, num, sides, rolls, total, reason;
+
+  if (bodyText == 'help') {
     attachments = [
       {
         text: "This slash command is to simulate rolling dice. The first number in the command is the number of dice to roll. The second number is the number of sides that die should have. For example a `/roll 2d6` will have a result between 2 and 12.",
@@ -63,7 +64,7 @@ module.exports = async (req, res) => {
         title: "Help"
       }
     ];
-  } else if (!/^\d+d\d+( .+)?$/.test(bodyText)){
+  } else if (!/^\d+d\d+( .+)?$/.test(bodyText)) {
     attachments = [
       {
         text: "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die",
@@ -74,14 +75,13 @@ module.exports = async (req, res) => {
     ];
   } else {
     const [rollText, ...reasonArr] = body.text.split(" ");
-    const [num, sides] = rollText.split('d').map((n) => parseInt(n));
+    [num, sides] = rollText.split('d').map((n) => parseInt(n));
 
-    let reason;
-    if (reasonArr.length){
+    if (reasonArr.length) {
       reason = reasonArr.join(" ");
     }
 
-    if (sides < 2){
+    if (sides < 2) {
       attachments = [
         {
           text: "When you find a fair die with that many sides, let me know",
@@ -118,8 +118,8 @@ module.exports = async (req, res) => {
         }
       ];
     } else {
-      let total = 0;
-      let rolls = [];
+      total = 0;
+      rolls = [];
       for (let i = 0; i < num; i++) {
         let roll = randomDiceRoll(sides);
         total += roll;
@@ -127,7 +127,7 @@ module.exports = async (req, res) => {
       };
 
       console.log(`ROLL: ${num}d${sides} = ${total}`);
-  
+
       attachments = [
         {
           fallback: "`" + body.text + "`: " + total,
@@ -159,9 +159,33 @@ module.exports = async (req, res) => {
     }
   }
 
-  
+
   const response_type = "in_channel";
 
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(JSON.stringify({ response_type, attachments }));
+
+  const AWS = require('aws-sdk');
+  AWS.config.update({region: 'us-east-1'});
+  const ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
+  var params = {
+    Item: {
+      "Sides": {
+        N: sides
+      },
+      "Num": {
+        N: num
+      },
+      "Total": {
+        N: total
+      },
+      "Rolls": {
+        NS: rolls
+      }
+    },
+    TableName: "slack-dice-rolls"
+  };
+  ddb.putItem(params, function (err, data) {
+    if (err) console.log(err, err.stack);
+  });
 };
