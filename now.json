@@ -20,5 +20,5 @@
       "use": "@now/md"
     }
   ],
-  "alias": "https://diceroll.now.sh"
+  "alias": "diceroll.now.sh"
 }
