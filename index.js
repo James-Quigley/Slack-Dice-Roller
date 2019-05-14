@@ -63,7 +63,7 @@ module.exports = async (req, res) => {
         title: "Help"
       }
     ];
-  } else if (!/^\d+d\d+$/.test(bodyText)){
+  } else if (!/^\d+d\d+( .+)?$/.test(bodyText)){
     attachments = [
       {
         text: "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die",
@@ -73,9 +73,13 @@ module.exports = async (req, res) => {
       }
     ];
   } else {
-    const [num, sides] = body.text.toLowerCase().split('d').map((n) => parseInt(n));
+    const [rollText, ...reasonArr] = body.text.split(" ");
+    const [num, sides] = rollText.text.split('d').map((n) => parseInt(n));
 
-
+    let reason;
+    if (reasonArr.length){
+      reason = reasonArr.join(" ");
+    }
 
     if (sides < 2){
       attachments = [
@@ -143,7 +147,15 @@ module.exports = async (req, res) => {
           ],
           footer: sides == 2 ? "Also known as a coin" : undefined
         }
-      ]
+      ];
+
+      if (reason) {
+        attachments[0].fields.push({
+          title: "Reason",
+          value: reason,
+          short: true
+        });
+      }
     }
   }
 
