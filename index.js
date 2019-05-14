@@ -74,7 +74,7 @@ module.exports = async (req, res) => {
     ];
   } else {
     const [rollText, ...reasonArr] = body.text.split(" ");
-    const [num, sides] = rollText.text.split('d').map((n) => parseInt(n));
+    const [num, sides] = rollText.split('d').map((n) => parseInt(n));
 
     let reason;
     if (reasonArr.length){
