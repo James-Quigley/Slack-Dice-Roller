@@ -176,16 +176,16 @@ module.exports = async (req, res) => {
   var params = {
     Item: {
       "Sides": {
-        N: sides
+        N: sides + ""
       },
       "Num": {
-        N: num
+        N: num + ""
       },
       "Total": {
-        N: total
+        N: total + ""
       },
       "Rolls": {
-        NS: rolls
+        NS: rolls.map(roll => roll + "")
       }
     },
     TableName: "slack-dice-rolls"
