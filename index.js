@@ -191,7 +191,7 @@ module.exports = async (req, res) => {
           N: total + ""
         },
         "Rolls": {
-          NS: rolls.map(roll => roll + "")
+          L: rolls.map(roll => ({ N: roll + "" }))
         }
       },
       TableName: "slack-dice-rolls"
