@@ -53,7 +53,7 @@ module.exports = async (req, res) => {
 
 
 
-  let attachments, num, sides, rolls, total, reason;
+  let attachments, num, sides, rolls, total, reason, writeDDB;
 
   if (bodyText == 'help') {
     attachments = [
@@ -64,6 +64,7 @@ module.exports = async (req, res) => {
         title: "Help"
       }
     ];
+    error = true;
   } else if (!/^\d+d\d+( .+)?$/.test(bodyText)) {
     attachments = [
       {
@@ -127,6 +128,7 @@ module.exports = async (req, res) => {
       };
 
       console.log(`ROLL: ${num}d${sides} = ${total}`);
+      writeDDB = true;
 
       attachments = [
         {
@@ -165,35 +167,37 @@ module.exports = async (req, res) => {
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(JSON.stringify({ response_type, attachments }));
 
-  const AWS = require('aws-sdk');
-  AWS.config.update(
-    {
-      region: 'us-east-1',
-      secretAccessKey: process.env.DICE_ROLL_AWS_SECRET_ACCESS_KEY,
-      accessKeyId: process.env.DICE_ROLL_AWS_ACCESS_KEY_ID
+  if (writeDDB) {
+    const AWS = require('aws-sdk');
+    AWS.config.update(
+      {
+        region: 'us-east-1',
+        secretAccessKey: process.env.DICE_ROLL_AWS_SECRET_ACCESS_KEY,
+        accessKeyId: process.env.DICE_ROLL_AWS_ACCESS_KEY_ID
+      });
+    const ddb = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
+    var params = {
+      Item: {
+        "uuid": {
+          S: uuid()
+        },
+        "Sides": {
+          N: sides + ""
+        },
+        "Num": {
+          N: num + ""
+        },
+        "Total": {
+          N: total + ""
+        },
+        "Rolls": {
+          NS: rolls.map(roll => roll + "")
+        }
+      },
+      TableName: "slack-dice-rolls"
+    };
+    ddb.putItem(params, function (err, data) {
+      if (err) console.log(err, err.stack);
     });
-  const ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
-  var params = {
-    Item: {
-      "uuid": {
-        S: uuid()
-      },
-      "Sides": {
-        N: sides + ""
-      },
-      "Num": {
-        N: num + ""
-      },
-      "Total": {
-        N: total + ""
-      },
-      "Rolls": {
-        NS: rolls.map(roll => roll + "")
-      }
-    },
-    TableName: "slack-dice-rolls"
-  };
-  ddb.putItem(params, function (err, data) {
-    if (err) console.log(err, err.stack);
-  });
+  }
 };
