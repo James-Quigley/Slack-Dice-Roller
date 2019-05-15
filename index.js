@@ -196,6 +196,11 @@ module.exports = async (req, res) => {
       },
       TableName: "slack-dice-rolls"
     };
+    if (reason) {
+      params.Item.Reason = {
+        S: reason
+      }
+    }
     ddb.putItem(params, function (err, data) {
       if (err) console.log(err, err.stack);
     });
