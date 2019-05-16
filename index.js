@@ -192,6 +192,9 @@ module.exports = async (req, res) => {
         },
         "Rolls": {
           L: rolls.map(roll => ({ N: roll + "" }))
+        },
+        "Date": {
+          N: Date.now() + ""
         }
       },
       TableName: "slack-dice-rolls"
