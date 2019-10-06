@@ -13,6 +13,8 @@ function randomDiceRoll(sides) {
   return Math.floor(Math.random() * sides) + 1;
 }
 
+const DEVELOPMENT = process.env.DEVELOPMENT;
+
 const MAX_DICE = 1000;
 const MAX_SIDES = 100;
 
@@ -26,32 +28,37 @@ module.exports = async (req, res) => {
   const rawBody = await text(req);
   const body = parse(rawBody);
 
-  const bodyText = body.text ? body.text.toLowerCase() : '';
+  let bodyText = body.text ? body.text.toLowerCase() : '';
+  console.log("RAW BODY", rawBody);
+  console.log("BODY", body);
+  console.log("BODY TEXT", bodyText);
 
-  const qsBody = qs.stringify(body, { format: 'RFC1738' });
-  var slackSignature = req.headers['x-slack-signature'];
-  var timestamp = req.headers['x-slack-request-timestamp'];
-
-  if (!slackSignature || !timestamp) {
-    return;
+  if (!DEVELOPMENT) {
+    const qsBody = qs.stringify(body, { format: 'RFC1738' });
+    var slackSignature = req.headers['x-slack-signature'];
+    var timestamp = req.headers['x-slack-request-timestamp'];
+  
+    if ((!slackSignature || !timestamp) && !DEVELOPMENT) {
+      return;
+    }
+  
+    var sigBasestring = 'v0:' + timestamp + ':' + qsBody;
+  
+    const slackSigningSecret = process.env.DICE_ROLL_SLACK_SIGNING_SECRET;
+  
+    var mySignature = 'v0=' +
+      crypto.createHmac('sha256', slackSigningSecret)
+        .update(sigBasestring, 'utf8')
+        .digest('hex');
+    if (!crypto.timingSafeEqual(
+      new Buffer(mySignature, 'utf8'),
+      new Buffer(slackSignature, 'utf8'))) {
+      res.writeHead(400, { "Content-Type": "text/plain" });
+      res.end("Signature verification failed");
+      return;
+    }
   }
 
-  var sigBasestring = 'v0:' + timestamp + ':' + qsBody;
-
-  const slackSigningSecret = process.env.DICE_ROLL_SLACK_SIGNING_SECRET;
-
-  var mySignature = 'v0=' +
-    crypto.createHmac('sha256', slackSigningSecret)
-      .update(sigBasestring, 'utf8')
-      .digest('hex');
-
-  if (!crypto.timingSafeEqual(
-    new Buffer(mySignature, 'utf8'),
-    new Buffer(slackSignature, 'utf8'))) {
-    res.writeHead(400, { "Content-Type": "text/plain" });
-    res.end("Signature verification failed");
-    return;
-  }
 
 
 
@@ -135,7 +142,7 @@ module.exports = async (req, res) => {
       };
 
       console.log(`ROLL: ${num}d${sides} = ${total}`);
-      writeDDB = true;
+      writeDDB = !DEVELOPMENT;
 
       total += modifier;
 
