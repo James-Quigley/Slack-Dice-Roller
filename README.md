@@ -1,4 +1,4 @@
-#D&D Slack Dice Roller
+# D&D Slack Dice Roller
 
 Usage:
 * `/roll [X]d[N][+/-][M] [reason]`
