@@ -16,7 +16,7 @@ function randomDiceRoll(sides) {
 const MAX_DICE = 1000;
 const MAX_SIDES = 100;
 
-const REGEX = /^(\d*)d(\d+)(\+\d+)?( .+)?$/;
+const REGEX = /^(\d*)d(\d+)([\+\-]\d+)?( .+)?$/;
 
 module.exports = async (req, res) => {
   if (req.method == "GET") {
