@@ -151,7 +151,7 @@ module.exports = async (req, res) => {
               short: true
             },
             {
-              title: "Rolls",
+              title: num > 1 ? "Rolls" : "Roll",
               value: num <= 100 ? rolls.join(", ") : "You're just going to have to trust me on this one",
               short: true
             }
@@ -162,8 +162,18 @@ module.exports = async (req, res) => {
       
       if (modifier) {
         attachments[0].fields.push({
+          title: "Base Total",
+          value: total-=modifier,
+          short: false
+        });
+        attachments[0].fields.push({
           title: "Modifier",
           value: modifier,
+          short: false
+        });
+        attachments[0].fields.push({
+          title: "Grand Total",
+          value: total,
           short: false
         });
       }
