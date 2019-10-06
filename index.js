@@ -68,6 +68,11 @@ module.exports = async (req, res) => {
         fallback: "This slash command is to simulate rolling dice. The first number in the command is the number of dice to roll. The second number is the number of sides that die should have. For example a `/roll 2d6` will have a result between 2 and 12.",
         color: "#ffff00",
         title: "Help"
+      },{
+        text: "If you omit the first number, it will default to a single die. You can also include a modifier and/or a reason for the roll, e.g. `1d20+2 initiative`. The modifier will be added to the total and the reason will be displayed for others to see.",
+        fallback: "If you omit the first number, it will default to a single die. You can also include a modifier and/or a reason for the roll, e.g. `1d20+2 initiative`. The modifier will be added to the total and the reason will be displayed for others to see.",
+        color: "#ffff00",
+        title: "Advanced"
       }
     ];
     error = true;
