@@ -163,7 +163,7 @@ module.exports = async (req, res) => {
       if (modifier) {
         attachments[0].fields.push({
           title: "Base Total",
-          value: total-=modifier,
+          value: total-modifier,
           short: false
         });
         attachments[0].fields.push({
