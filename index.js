@@ -168,24 +168,24 @@ module.exports = async (req, res) => {
         attachments[0].fields.push({
           title: "Base Total",
           value: total-modifier,
-          short: false
+          short: true
         });
         attachments[0].fields.push({
           title: "Modifier",
           value: modifier,
-          short: false
+          short: true
         });
         attachments[0].fields.push({
           title: "Grand Total",
           value: total,
-          short: false
+          short: true
         });
       }
       if (reason) {
         attachments[0].fields.push({
           title: "Reason",
           value: reason,
-          short: false
+          short: true
         });
       }
     }
