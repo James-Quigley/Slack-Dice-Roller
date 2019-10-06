@@ -78,7 +78,7 @@ module.exports = async (req, res) => {
     ];
   } else {
     const match = bodyText.match(REGEX).slice(1, 5);
-    const reason = match[match.legnth - 1];
+    const reason = match[match.length - 1];
     let [num, sides, modifier] = match.slice(0, match.length - 1).map(n => parseInt(n));
 
     if (isNaN(num)){
