@@ -12,5 +12,14 @@
     "qs": "^6.7.0",
     "querystring": "^0.2.0",
     "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "request-promise": "^4.2.4",
+    "test-listen": "^1.1.0"
+  },
+  "scripts": {
+    "test": "DEVELOPMENT=true jest",
+    "test:watch": "DEVELOPMENT=true jest --watch"
   }
 }

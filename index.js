@@ -29,9 +29,6 @@ module.exports = async (req, res) => {
   const body = parse(rawBody);
 
   let bodyText = body.text ? body.text.toLowerCase() : '';
-  console.log("RAW BODY", rawBody);
-  console.log("BODY", body);
-  console.log("BODY TEXT", bodyText);
 
   if (!DEVELOPMENT) {
     const qsBody = qs.stringify(body, { format: 'RFC1738' });
@@ -141,7 +138,7 @@ module.exports = async (req, res) => {
         rolls.push(roll);
       };
 
-      console.log(`ROLL: ${num}d${sides} = ${total}`);
+      if (!DEVELOPMENT) console.log(`ROLL: ${num}d${sides} = ${total}`);
       writeDDB = !DEVELOPMENT;
 
       total += modifier;
