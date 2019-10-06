@@ -65,7 +65,7 @@ module.exports = async (req, res) => {
       }
     ];
     error = true;
-  } else if (!/^\d+d\d+( .+)?$/.test(bodyText)) {
+  } else if (!/^\d*d\d+( .+)?$/.test(bodyText)) {
     attachments = [
       {
         text: "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die",
@@ -77,6 +77,9 @@ module.exports = async (req, res) => {
   } else {
     const [rollText, ...reasonArr] = body.text.split(" ");
     [num, sides] = rollText.split('d').map((n) => parseInt(n));
+    if (isNaN(num)){
+      num = 1
+    }
 
     if (reasonArr.length) {
       reason = reasonArr.join(" ");
