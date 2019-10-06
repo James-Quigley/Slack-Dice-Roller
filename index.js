@@ -16,6 +16,8 @@ function randomDiceRoll(sides) {
 const MAX_DICE = 1000;
 const MAX_SIDES = 100;
 
+const REGEX = /^(\d*)d(\d+)(\+\d+)?( .+)?$/;
+
 module.exports = async (req, res) => {
   if (req.method == "GET") {
     res.end(html);
@@ -65,7 +67,7 @@ module.exports = async (req, res) => {
       }
     ];
     error = true;
-  } else if (!/^\d*d\d+( .+)?$/.test(bodyText)) {
+  } else if (!REGEX.test(bodyText)) {
     attachments = [
       {
         text: "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die",
@@ -75,14 +77,16 @@ module.exports = async (req, res) => {
       }
     ];
   } else {
-    const [rollText, ...reasonArr] = body.text.split(" ");
-    [num, sides] = rollText.split('d').map((n) => parseInt(n));
+    const match = bodyText.match(REGEX).slice(1, 5);
+    const reason = match[match.legnth - 1];
+    let [num, sides, modifier] = match.slice(0, match.length - 1).map(n => parseInt(n));
+
     if (isNaN(num)){
-      num = 1
+      num = 1;
     }
 
-    if (reasonArr.length) {
-      reason = reasonArr.join(" ");
+    if (isNaN(modifier)){
+      modifier = 0;
     }
 
     if (sides < 2) {
@@ -133,6 +137,8 @@ module.exports = async (req, res) => {
       console.log(`ROLL: ${num}d${sides} = ${total}`);
       writeDDB = true;
 
+      total += modifier;
+
       attachments = [
         {
           fallback: "`" + body.text + "`: " + total,
@@ -141,7 +147,7 @@ module.exports = async (req, res) => {
           fields: [
             {
               title: "Die",
-              value: rollText,
+              value: `d${sides}`,
               short: true
             },
             {
@@ -153,7 +159,14 @@ module.exports = async (req, res) => {
           footer: sides == 2 ? "Also known as a coin" : undefined
         }
       ];
-
+      
+      if (modifier) {
+        attachments[0].fields.push({
+          title: "Modifier",
+          value: modifier,
+          short: false
+        });
+      }
       if (reason) {
         attachments[0].fields.push({
           title: "Reason",
