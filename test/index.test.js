@@ -83,6 +83,22 @@ test('Text should start with username', async () => {
     expect(text.substring(0, 5)).toBe('@test');
 });
 
+test('Empty body should roll one d20', async () => {
+    const body = await request(url, {
+        method: 'POST',
+        body: qs.stringify({
+            text: '',
+            user_name: 'test'
+        })
+    });
+
+    const { attachments } = JSON.parse(body);
+    const { fallback, color, text, fields, title } = attachments[0];
+    expect(text.substring(0, 5)).toBe('@test');
+    expect(fields.length).toBe(2);
+    expect(fields[0].value).toBe('d20');
+});
+
 test('Test all possible fields length combinations', async () => {
     var body = await request(url, {
         method: 'POST',

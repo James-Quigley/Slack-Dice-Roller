@@ -76,7 +76,7 @@ module.exports = async (req, res) => {
       }
     ];
     error = true;
-  } else if (!REGEX.test(bodyText)) {
+  } else if (!REGEX.test(bodyText) && bodyText.trim() != '') {
     attachments = [
       {
         text: "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die",
@@ -86,9 +86,17 @@ module.exports = async (req, res) => {
       }
     ];
   } else {
-    const match = bodyText.match(REGEX).slice(1, 5);
-    const reason = match[match.length - 1];
-    let [num, sides, modifier] = match.slice(0, match.length - 1).map(n => parseInt(n));
+    let reason, num, sides, modifier;
+    if (bodyText.trim() == ''){
+      reason = '';
+      num = 1;
+      sides = 20;
+      modifier = 0;
+    } else {
+      const match = bodyText.match(REGEX).slice(1, 5);
+      reason = match[match.length - 1];
+      [num, sides, modifier] = match.slice(0, match.length - 1).map(n => parseInt(n));
+    }
 
     if (isNaN(num)){
       num = 1;
