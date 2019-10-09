@@ -161,7 +161,7 @@ module.exports = async (req, res) => {
         {
           fallback: "`" + body.text + "`: " + total,
           color: "#00ff00",
-          text: `@${body.user_id} rolled a *${total}*`,
+          text: `<@${body.user_id}> rolled a *${total}*`,
           fields: [
             {
               title: "Die",
