@@ -5,6 +5,9 @@
     "DICE_ROLL_SLACK_CLIENT_ID": "@dice-roll-slack-client-id",
     "DICE_ROLL_SLACK_CLIENT_SECRET": "@dice-roll-slack-client-secret",
     "DICE_ROLL_SLACK_SIGNING_SECRET": "@dice-roll-slack-signing-secret",
+    "DICE_ROLL_DEV_SLACK_CLIENT_ID": "@dice-roll-dev-slack-client-id",
+    "DICE_ROLL_DEV_SLACK_CLIENT_SECRET": "@dice-roll-dev-slack-client-secret",
+    "DICE_ROLL_DEV_SLACK_SIGNING_SECRET": "@dice-roll-dev-slack-signing-secret",
     "DICE_ROLL_AWS_ACCESS_KEY_ID": "@dice-roll-aws-access-key-id",
     "DICE_ROLL_AWS_SECRET_ACCESS_KEY": "@dice-roll-aws-secret-access-key"
   },

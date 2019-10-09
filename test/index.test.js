@@ -34,7 +34,7 @@ test('Message should have a single attachment', async () => {
         method: 'POST',
         body: qs.stringify({
             text: '2d8+5 something',
-            user_name: 'test'
+            user_id: 'test'
         })
     });
 
@@ -47,7 +47,7 @@ test('Attachment fallback should be a string', async () => {
         method: 'POST',
         body: qs.stringify({
             text: '2d8+5 something',
-            user_name: 'test'
+            user_id: 'test'
         })
     });
     const { attachments } = JSON.parse(body);
@@ -60,7 +60,7 @@ test('Attachment color should be green', async () => {
         method: 'POST',
         body: qs.stringify({
             text: '2d8+5 something',
-            user_name: 'test'
+            user_id: 'test'
         })
     });
 
@@ -74,7 +74,7 @@ test('Text should start with username', async () => {
         method: 'POST',
         body: qs.stringify({
             text: '2d8+5 something',
-            user_name: 'test'
+            user_id: 'test'
         })
     });
 
@@ -88,7 +88,7 @@ test('Empty body should roll one d20', async () => {
         method: 'POST',
         body: qs.stringify({
             text: '',
-            user_name: 'test'
+            user_id: 'test'
         })
     });
 
@@ -104,7 +104,7 @@ test('Test all possible fields length combinations', async () => {
         method: 'POST',
         body: qs.stringify({
             text: '2d8+5 something',
-            user_name: 'test'
+            user_id: 'test'
         })
     });
 
@@ -116,7 +116,7 @@ test('Test all possible fields length combinations', async () => {
         method: 'POST',
         body: qs.stringify({
             text: 'd8+5 something',
-            user_name: 'test'
+            user_id: 'test'
         })
     });
 
@@ -128,7 +128,7 @@ test('Test all possible fields length combinations', async () => {
         method: 'POST',
         body: qs.stringify({
             text: '2d8 something',
-            user_name: 'test'
+            user_id: 'test'
         })
     });
 
@@ -140,7 +140,7 @@ test('Test all possible fields length combinations', async () => {
         method: 'POST',
         body: qs.stringify({
             text: '2d8',
-            user_name: 'test'
+            user_id: 'test'
         })
     });
 
@@ -152,7 +152,7 @@ test('Test all possible fields length combinations', async () => {
         method: 'POST',
         body: qs.stringify({
             text: '2d8+5',
-            user_name: 'test'
+            user_id: 'test'
         })
     });
 
@@ -166,7 +166,7 @@ test('Should fail', async () => {
         method: 'POST',
         body: qs.stringify({
             text: 'bad string',
-            user_name: 'test'
+            user_id: 'test'
         })
     });
 

@@ -13,8 +13,9 @@ module.exports = async (req, res) => {
   const code = parse(urlQueryString).code;
 
   // Compose authHeader by encoding the string ${client_id}:${client_secret}
-  const client_id = process.env.DICE_ROLL_SLACK_CLIENT_ID;
-  const client_secret = process.env.DICE_ROLL_SLACK_CLIENT_SECRET;
+  let prefix = process.env.NOW_GITHUB_COMMIT_REF === 'dev' ? '_DEV' : ''
+  const client_id = process.env[`DICE_ROLL${prefix}_SLACK_CLIENT_ID`];
+  const client_secret = process.env[`DICE_ROLL${prefix}_SLACK_CLIENT_SECRET`];
   const Authorization = 'Basic ' + Buffer.from(`${client_id}:${client_secret}`).toString('base64');
 
   // Hit oauth.access for access_token

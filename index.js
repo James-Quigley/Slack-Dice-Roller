@@ -29,6 +29,7 @@ module.exports = async (req, res) => {
   const body = parse(rawBody);
 
   let bodyText = body.text ? body.text.toLowerCase() : '';
+  let prefix = process.env.NOW_GITHUB_COMMIT_REF === 'dev' ? '_DEV' : '';
 
   if (!DEVELOPMENT) {
     const qsBody = qs.stringify(body, { format: 'RFC1738' });
@@ -41,7 +42,7 @@ module.exports = async (req, res) => {
   
     var sigBasestring = 'v0:' + timestamp + ':' + qsBody;
   
-    const slackSigningSecret = process.env.DICE_ROLL_SLACK_SIGNING_SECRET;
+    const slackSigningSecret = process.env[`DICE_ROLL${prefix}_SLACK_SIGNING_SECRET`];
   
     var mySignature = 'v0=' +
       crypto.createHmac('sha256', slackSigningSecret)
@@ -152,7 +153,7 @@ module.exports = async (req, res) => {
       };
 
       if (!DEVELOPMENT) console.log(`ROLL: ${num}d${sides} = ${total}`);
-      writeDDB = !DEVELOPMENT;
+      writeDDB = !prefix.length && !DEVELOPMENT;
 
       total += modifier;
 
@@ -160,7 +161,7 @@ module.exports = async (req, res) => {
         {
           fallback: "`" + body.text + "`: " + total,
           color: "#00ff00",
-          text: `@${body.user_name} rolled a *${total}*`,
+          text: `@${body.user_id} rolled a *${total}*`,
           fields: [
             {
               title: "Die",
