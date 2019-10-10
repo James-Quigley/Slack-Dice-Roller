@@ -28,6 +28,7 @@ module.exports = async (req, res) => {
   const rawBody = await text(req);
   const body = parse(rawBody);
 
+  console.log(body);
   let bodyText = body.text ? body.text.toLowerCase() : '';
   let prefix = process.env.NOW_GITHUB_COMMIT_REF === 'dev' ? '_DEV' : '';
 
