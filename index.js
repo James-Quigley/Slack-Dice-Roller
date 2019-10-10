@@ -161,47 +161,48 @@ module.exports = async (req, res) => {
         {
           fallback: "`" + body.text + "`: " + total,
           color: "#00ff00",
-          text: `<@${body.user_id}> rolled a *${total}*`,
-          fields: [
-            {
-              title: "Die",
-              value: `d${sides}`,
-              short: true
-            },
-            {
-              title: num > 1 ? "Rolls" : "Roll",
-              value: num <= 100 ? rolls.join(", ") : "You're just going to have to trust me on this one",
-              short: true
-            }
-          ],
+          // text: `_<@${body.user_id}> rolled ${bodyText}: ${rolls.join(", ")}, ${modifier} = *${total}*_`,
+          text: `_<@${body.user_id}> rolled ${bodyText} = *${total}*_`,
+          // fields: [
+          //   {
+          //     title: "Die",
+          //     value: `d${sides}`,
+          //     short: true
+          //   },
+          //   {
+          //     title: num > 1 ? "Rolls" : "Roll",
+          //     value: num <= 100 ? rolls.join(", ") : "You're just going to have to trust me on this one",
+          //     short: true
+          //   }
+          // ],
           footer: sides == 2 ? "Also known as a coin" : undefined
         }
       ];
       
-      if (modifier) {
-        attachments[0].fields.push({
-          title: "Base Total",
-          value: total-modifier,
-          short: true
-        });
-        attachments[0].fields.push({
-          title: "Modifier",
-          value: modifier,
-          short: true
-        });
-        attachments[0].fields.push({
-          title: "Grand Total",
-          value: total,
-          short: true
-        });
-      }
-      if (reason) {
-        attachments[0].fields.push({
-          title: "Reason",
-          value: reason,
-          short: true
-        });
-      }
+      // if (modifier) {
+      //   attachments[0].fields.push({
+      //     title: "Base Total",
+      //     value: total-modifier,
+      //     short: true
+      //   });
+      //   attachments[0].fields.push({
+      //     title: "Modifier",
+      //     value: modifier,
+      //     short: true
+      //   });
+      //   attachments[0].fields.push({
+      //     title: "Grand Total",
+      //     value: total,
+      //     short: true
+      //   });
+      // }
+      // if (reason) {
+      //   attachments[0].fields.push({
+      //     title: "Reason",
+      //     value: reason,
+      //     short: true
+      //   });
+      // }
     }
   }
 
@@ -211,7 +212,7 @@ module.exports = async (req, res) => {
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(JSON.stringify({ response_type, attachments }));
 
-  if (writeDDB) {
+  if (writeDDB && 1==2) {
     const AWS = require('aws-sdk');
     AWS.config.update(
       {

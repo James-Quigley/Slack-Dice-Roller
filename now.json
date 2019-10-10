@@ -1,5 +1,5 @@
 {
-  "name": "slack dice roll",
+  "name": "High Dex Dice",
   "version": 2,
   "env": {
     "DICE_ROLL_SLACK_CLIENT_ID": "@dice-roll-slack-client-id",
@@ -25,5 +25,5 @@
       "use": "@now/md"
     }
   ],
-  "alias": "diceroll.now.sh"
+  "alias": "highdexdice.now.sh"
 }
