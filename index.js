@@ -18,7 +18,7 @@ const DEVELOPMENT = process.env.DEVELOPMENT;
 const MAX_DICE = 1000;
 const MAX_SIDES = 100;
 
-const REGEX = /^(\d*)d(\d+)(\s?[\+\-]\s?\d+)?( .+)?$/i;
+const REGEX = /^((\d*)?d(\d+)(\s?[\+\-]\s?\d+)?)?(.+)?$/i;
 
 module.exports = async (req, res) => {
   if (req.method == "GET") {
@@ -95,17 +95,21 @@ module.exports = async (req, res) => {
       sides = 20;
       modifier = 0;
     } else {
-      const match = bodyText.match(REGEX).slice(1, 5);
-      reason = match[match.length - 1];
+      const match = bodyText.match(REGEX).slice(2, 6);
+      reason = match[match.length - 1].trim() || '';
       [num, sides, modifier] = match.slice(0, match.length - 1).map(n => parseInt(n ? n.replace(/\s+/g, ''): 0));
     }
 
-    reason = reason ? reason.replace(/<@([WU].+?)>/g, (_, p1) => {
+    reason = reason.replace(/<@([WU].+?)>/g, (_, p1) => {
       return `<@${p1.split("|")[0]}>`;
-    }) : reason;
+    });
 
     if (isNaN(num) ||  num === 0){
       num = 1;
+    }
+
+    if (isNaN(sides) ||  sides === 0){
+      sides = 20;
     }
 
     if (isNaN(modifier)){
