@@ -18,7 +18,7 @@ const DEVELOPMENT = process.env.DEVELOPMENT;
 const MAX_DICE = 1000;
 const MAX_SIDES = 100;
 
-const REGEX = /^(\d*)d(\d+)(\s?[\+\-]\s?\d+)?( .+)?$/;
+const REGEX = /^(\d*)d(\d+)(\s?[\+\-]\s?\d+)?( .+)?$/i;
 
 module.exports = async (req, res) => {
   if (req.method == "GET") {
@@ -28,7 +28,8 @@ module.exports = async (req, res) => {
   const rawBody = await text(req);
   const body = parse(rawBody);
 
-  let bodyText = body.text ? body.text.toLowerCase() : '';
+  console.log(body);
+  let bodyText = body.text || '';
   let prefix = process.env.NOW_GITHUB_COMMIT_REF === 'dev' ? '_DEV' : '';
 
   if (!DEVELOPMENT) {
@@ -98,6 +99,10 @@ module.exports = async (req, res) => {
       reason = match[match.length - 1];
       [num, sides, modifier] = match.slice(0, match.length - 1).map(n => parseInt(n ? n.replace(/\s+/g, ''): 0));
     }
+
+    reason = reason ? reason.replace(/<@([WU].+?)>/g, (_, p1) => {
+      return `<@${p1.split("|")[0]}>`;
+    }) : reason;
 
     if (isNaN(num)){
       num = 1;
