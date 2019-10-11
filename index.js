@@ -100,9 +100,9 @@ module.exports = async (req, res) => {
       [num, sides, modifier] = match.slice(0, match.length - 1).map(n => parseInt(n));
     }
 
-    reason = reason.replace(/<@([WU].+?)>/g, (_, p1) => {
+    reason = reason ? reason.replace(/<@([WU].+?)>/g, (_, p1) => {
       return `<@${p1.split("|")[0]}>`;
-    })
+    }) : reason;
 
     if (isNaN(num)){
       num = 1;
