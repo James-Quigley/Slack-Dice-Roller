@@ -18,7 +18,7 @@ const DEVELOPMENT = process.env.DEVELOPMENT;
 const MAX_DICE = 1000;
 const MAX_SIDES = 100;
 
-const REGEX = /^(\d*)d(\d+)([\+\-]\d+)?( .+)?$/;
+const REGEX = /^(\d*)d(\d+)([\+\-]\d+)?( .+)?$/i;
 
 module.exports = async (req, res) => {
   if (req.method == "GET") {
@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
   const body = parse(rawBody);
 
   console.log(body);
-  let bodyText = body.text ? body.text.toLowerCase() : '';
+  let bodyText = body.text || '';
   let prefix = process.env.NOW_GITHUB_COMMIT_REF === 'dev' ? '_DEV' : '';
 
   if (!DEVELOPMENT) {
