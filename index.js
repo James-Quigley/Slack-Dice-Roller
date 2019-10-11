@@ -104,7 +104,7 @@ module.exports = async (req, res) => {
       return `<@${p1.split("|")[0]}>`;
     }) : reason;
 
-    if (isNaN(num)){
+    if (isNaN(num) ||  num === 0){
       num = 1;
     }
 
