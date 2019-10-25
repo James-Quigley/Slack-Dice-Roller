@@ -80,7 +80,7 @@ test('Text should start with username', async () => {
 
     const { attachments } = JSON.parse(body);
     const { fallback, color, text, fields } = attachments[0];
-    expect(text.substring(0, 5)).toBe('@test');
+    expect(text.substring(0, 7)).toBe('<@test>');
 });
 
 test('Empty body should roll one d20', async () => {
@@ -94,7 +94,7 @@ test('Empty body should roll one d20', async () => {
 
     const { attachments } = JSON.parse(body);
     const { fallback, color, text, fields, title } = attachments[0];
-    expect(text.substring(0, 5)).toBe('@test');
+    expect(text.substring(0, 7)).toBe('<@test>');
     expect(fields.length).toBe(2);
     expect(fields[0].value).toBe('d20');
 });
@@ -161,17 +161,18 @@ test('Test all possible fields length combinations', async () => {
     expect(fields.length).toBe(5);
 });
 
-test('Should fail', async () => {
+test('Just a reason should roll one d20', async () => {
     const body = await request(url, {
         method: 'POST',
         body: qs.stringify({
-            text: 'bad string',
+            text: 'some stuff',
             user_id: 'test'
         })
     });
 
     const { attachments } = JSON.parse(body);
     const { fallback, color, text, fields, title } = attachments[0];
-    expect(color).toBe('#ff0000');
-    expect(title).toBe('Invalid input')
+    expect(text.substring(0, 7)).toBe('<@test>');
+    expect(fields.length).toBe(3);
+    expect(fields[0].value).toBe('d20');
 });
