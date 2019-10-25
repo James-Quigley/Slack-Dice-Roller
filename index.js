@@ -96,7 +96,8 @@ module.exports = async (req, res) => {
       modifier = 0;
     } else {
       const match = bodyText.match(REGEX).slice(2, 6);
-      reason = match[match.length - 1].trim() || '';
+
+      reason = (match[match.length - 1] || '').trim();
       [num, sides, modifier] = match.slice(0, match.length - 1).map(n => parseInt(n ? n.replace(/\s+/g, ''): 0));
     }
 
