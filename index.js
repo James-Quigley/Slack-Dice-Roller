@@ -16,7 +16,7 @@ function randomDiceRoll(sides) {
 const DEVELOPMENT = process.env.DEVELOPMENT;
 
 const MAX_DICE = 1000;
-const MAX_SIDES = 100;
+const MAX_SIDES = 6000;
 
 const REGEX = /^((\d*)?d(\d+)(\s?[\+\-]\s?\d+)?)?(.+)?$/i;
 
