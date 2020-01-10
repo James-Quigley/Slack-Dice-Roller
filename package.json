@@ -21,5 +21,6 @@
   "scripts": {
     "test": "DEVELOPMENT=true jest",
     "test:watch": "DEVELOPMENT=true jest --watch"
-  }
+  },
+  "engines": { "node": "12.x" }
 }
