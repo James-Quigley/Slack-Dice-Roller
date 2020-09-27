@@ -1,12 +1,12 @@
 const { text } = require("micro");
 const { parse } = require("querystring");
-const fs = require('fs');
-const path = require('path');
-const qs = require('qs');
-const crypto = require('crypto');
-const uuid = require('uuid/v4');
+const fs = require("fs");
+const path = require("path");
+const qs = require("qs");
+const crypto = require("crypto");
+const uuid = require("uuid/v4");
 
-const document = path.join(__dirname, 'index.html');
+const document = path.join(__dirname, "index.html");
 const html = fs.readFileSync(document);
 
 function randomDiceRoll(sides) {
@@ -29,91 +29,103 @@ module.exports = async (req, res) => {
   const body = parse(rawBody);
 
   console.log(body);
-  let bodyText = body.text || '';
-  let prefix = process.env.NOW_GITHUB_COMMIT_REF === 'dev' ? '_DEV' : '';
+  let bodyText = body.text || "";
+  let prefix = process.env.NOW_GITHUB_COMMIT_REF === "dev" ? "_DEV" : "";
 
   if (!DEVELOPMENT) {
-    const qsBody = qs.stringify(body, { format: 'RFC1738' });
-    var slackSignature = req.headers['x-slack-signature'];
-    var timestamp = req.headers['x-slack-request-timestamp'];
-  
+    const qsBody = qs.stringify(body, { format: "RFC1738" });
+    var slackSignature = req.headers["x-slack-signature"];
+    var timestamp = req.headers["x-slack-request-timestamp"];
+
     if ((!slackSignature || !timestamp) && !DEVELOPMENT) {
       return;
     }
-  
-    var sigBasestring = 'v0:' + timestamp + ':' + qsBody;
-  
-    const slackSigningSecret = process.env[`DICE_ROLL${prefix}_SLACK_SIGNING_SECRET`];
-  
-    var mySignature = 'v0=' +
-      crypto.createHmac('sha256', slackSigningSecret)
-        .update(sigBasestring, 'utf8')
-        .digest('hex');
-    if (!crypto.timingSafeEqual(
-      new Buffer(mySignature, 'utf8'),
-      new Buffer(slackSignature, 'utf8'))) {
+
+    var sigBasestring = "v0:" + timestamp + ":" + qsBody;
+
+    const slackSigningSecret =
+      process.env[`DICE_ROLL${prefix}_SLACK_SIGNING_SECRET`];
+
+    var mySignature =
+      "v0=" +
+      crypto
+        .createHmac("sha256", slackSigningSecret)
+        .update(sigBasestring, "utf8")
+        .digest("hex");
+    if (
+      !crypto.timingSafeEqual(
+        new Buffer(mySignature, "utf8"),
+        new Buffer(slackSignature, "utf8")
+      )
+    ) {
       res.writeHead(400, { "Content-Type": "text/plain" });
       res.end("Signature verification failed");
       return;
     }
   }
 
-
-
-
   let attachments, num, sides, rolls, total, reason, writeDDB;
 
-  if (bodyText == 'help') {
+  if (bodyText == "help") {
     attachments = [
       {
-        text: "This slash command is to simulate rolling dice. The first number in the command is the number of dice to roll. The second number is the number of sides that die should have. For example a `/roll 2d6` will have a result between 2 and 12.",
-        fallback: "This slash command is to simulate rolling dice. The first number in the command is the number of dice to roll. The second number is the number of sides that die should have. For example a `/roll 2d6` will have a result between 2 and 12.",
+        text:
+          "This slash command is to simulate rolling dice. The first number in the command is the number of dice to roll. The second number is the number of sides that die should have. For example a `/roll 2d6` will have a result between 2 and 12.",
+        fallback:
+          "This slash command is to simulate rolling dice. The first number in the command is the number of dice to roll. The second number is the number of sides that die should have. For example a `/roll 2d6` will have a result between 2 and 12.",
         color: "#ffff00",
-        title: "Help"
-      },{
-        text: "If you omit the first number, it will default to a single die. You can also include a modifier and/or a reason for the roll, e.g. `1d20+2 initiative`. The modifier will be added to the total and the reason will be displayed for others to see.",
-        fallback: "If you omit the first number, it will default to a single die. You can also include a modifier and/or a reason for the roll, e.g. `1d20+2 initiative`. The modifier will be added to the total and the reason will be displayed for others to see.",
+        title: "Help",
+      },
+      {
+        text:
+          "If you omit the first number, it will default to a single die. You can also include a modifier and/or a reason for the roll, e.g. `1d20+2 initiative`. The modifier will be added to the total and the reason will be displayed for others to see.",
+        fallback:
+          "If you omit the first number, it will default to a single die. You can also include a modifier and/or a reason for the roll, e.g. `1d20+2 initiative`. The modifier will be added to the total and the reason will be displayed for others to see.",
         color: "#ffff00",
-        title: "Advanced"
-      }
+        title: "Advanced",
+      },
     ];
     error = true;
-  } else if (!REGEX.test(bodyText) && bodyText.trim() != '') {
+  } else if (!REGEX.test(bodyText) && bodyText.trim() != "") {
     attachments = [
       {
-        text: "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die",
-        fallback: "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die",
+        text:
+          "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die",
+        fallback:
+          "Please type an input in the format ndx, where _n_ is the number of dice to roll, and _x_ is the number of sides on each die",
         color: "#ff0000",
-        title: "Invalid input"
-      }
+        title: "Invalid input",
+      },
     ];
   } else {
     let reason, num, sides, modifier;
-    if (bodyText.trim() == ''){
-      reason = '';
+    if (bodyText.trim() == "") {
+      reason = "";
       num = 1;
       sides = 20;
       modifier = 0;
     } else {
       const match = bodyText.match(REGEX).slice(2, 6);
 
-      reason = (match[match.length - 1] || '').trim();
-      [num, sides, modifier] = match.slice(0, match.length - 1).map(n => parseInt(n ? n.replace(/\s+/g, ''): 0));
+      reason = (match[match.length - 1] || "").trim();
+      [num, sides, modifier] = match
+        .slice(0, match.length - 1)
+        .map((n) => parseInt(n ? n.replace(/\s+/g, "") : 0));
     }
 
     reason = reason.replace(/<@([WU].+?)>/g, (_, p1) => {
       return `<@${p1.split("|")[0]}>`;
     });
 
-    if (isNaN(num) ||  num === 0){
+    if (isNaN(num) || num === 0) {
       num = 1;
     }
 
-    if (isNaN(sides) ||  sides === 0){
+    if (isNaN(sides) || sides === 0) {
       sides = 20;
     }
 
-    if (isNaN(modifier)){
+    if (isNaN(modifier)) {
       modifier = 0;
     }
 
@@ -121,10 +133,11 @@ module.exports = async (req, res) => {
       attachments = [
         {
           text: "When you find a fair die with that many sides, let me know",
-          fallback: "When you find a fair die with that many sides, let me know",
+          fallback:
+            "When you find a fair die with that many sides, let me know",
           color: "#ff0000",
-          title: "Invalid input"
-        }
+          title: "Invalid input",
+        },
       ];
     } else if (num < 1) {
       attachments = [
@@ -132,8 +145,8 @@ module.exports = async (req, res) => {
           text: "I need to roll at least one die",
           fallback: "I need to roll at least one die",
           color: "#ff0000",
-          title: "Invalid input"
-        }
+          title: "Invalid input",
+        },
       ];
     } else if (num > MAX_DICE) {
       attachments = [
@@ -141,8 +154,8 @@ module.exports = async (req, res) => {
           text: `${MAX_DICE} dice maximum`,
           fallback: `${MAX_DICE} dice maximum`,
           color: "#ff0000",
-          title: "Invalid input"
-        }
+          title: "Invalid input",
+        },
       ];
     } else if (sides > MAX_SIDES) {
       attachments = [
@@ -150,8 +163,8 @@ module.exports = async (req, res) => {
           text: `${MAX_SIDES} sides maximum`,
           fallback: `${MAX_SIDES} sides maximum`,
           color: "#ff0000",
-          title: "Invalid input"
-        }
+          title: "Invalid input",
+        },
       ];
     } else {
       total = 0;
@@ -160,7 +173,7 @@ module.exports = async (req, res) => {
         let roll = randomDiceRoll(sides);
         total += roll;
         rolls.push(roll);
-      };
+      }
 
       if (!DEVELOPMENT) console.log(`ROLL: ${num}d${sides} = ${total}`);
       writeDDB = !prefix.length && !DEVELOPMENT;
@@ -176,87 +189,88 @@ module.exports = async (req, res) => {
             {
               title: "Die",
               value: `d${sides}`,
-              short: true
+              short: true,
             },
             {
               title: num > 1 ? "Rolls" : "Roll",
-              value: num <= 100 ? rolls.join(", ") : "You're just going to have to trust me on this one",
-              short: true
-            }
+              value:
+                num <= 100
+                  ? rolls.join(", ")
+                  : "You're just going to have to trust me on this one",
+              short: true,
+            },
           ],
-          footer: sides == 2 ? "Also known as a coin" : undefined
-        }
+          footer: sides == 2 ? "Also known as a coin" : undefined,
+        },
       ];
-      
+
       if (modifier) {
         attachments[0].fields.push({
           title: "Base Total",
-          value: total-modifier,
-          short: true
+          value: total - modifier,
+          short: true,
         });
         attachments[0].fields.push({
           title: "Modifier",
           value: modifier,
-          short: true
+          short: true,
         });
         attachments[0].fields.push({
           title: "Grand Total",
           value: total,
-          short: true
+          short: true,
         });
       }
       if (reason) {
         attachments[0].fields.push({
           title: "Reason",
           value: reason,
-          short: true
+          short: true,
         });
       }
     }
   }
-
 
   const response_type = "in_channel";
 
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(JSON.stringify({ response_type, attachments }));
 
-  if (writeDDB) {
-    const AWS = require('aws-sdk');
-    AWS.config.update(
-      {
-        region: 'us-east-1',
-        secretAccessKey: process.env.DICE_ROLL_AWS_SECRET_ACCESS_KEY,
-        accessKeyId: process.env.DICE_ROLL_AWS_ACCESS_KEY_ID
-      });
-    const ddb = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
+  if (false) {
+    const AWS = require("aws-sdk");
+    AWS.config.update({
+      region: "us-east-1",
+      secretAccessKey: process.env.DICE_ROLL_AWS_SECRET_ACCESS_KEY,
+      accessKeyId: process.env.DICE_ROLL_AWS_ACCESS_KEY_ID,
+    });
+    const ddb = new AWS.DynamoDB({ apiVersion: "2012-08-10" });
     var params = {
       Item: {
-        "uuid": {
-          S: uuid()
+        uuid: {
+          S: uuid(),
         },
-        "Sides": {
-          N: sides + ""
+        Sides: {
+          N: sides + "",
         },
-        "Num": {
-          N: num + ""
+        Num: {
+          N: num + "",
         },
-        "Total": {
-          N: total + ""
+        Total: {
+          N: total + "",
         },
-        "Rolls": {
-          L: rolls.map(roll => ({ N: roll + "" }))
+        Rolls: {
+          L: rolls.map((roll) => ({ N: roll + "" })),
         },
-        "Date": {
-          N: Date.now() + ""
-        }
+        Date: {
+          N: Date.now() + "",
+        },
       },
-      TableName: "slack-dice-rolls"
+      TableName: "slack-dice-rolls",
     };
     if (reason) {
       params.Item.Reason = {
-        S: reason
-      }
+        S: reason,
+      };
     }
     ddb.putItem(params, function (err, data) {
       if (err) console.log(err, err.stack);
